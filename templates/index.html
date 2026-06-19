@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Intercambios</p>
+    <h1>Posts de cartas repetidas y faltantes</h1>
+  </div>
+  <a class="button" href="{{ url_for('new_post') }}">Crear post</a>
+</section>
+
+{% if posts %}
+  <section class="post-list">
+    {% for post in posts %}
+      <article class="post-card">
+        <div>
+          <h2>{{ post.person_name }}</h2>
+          <p>{{ post.created_at }}</p>
+        </div>
+        <dl>
+          <div>
+            <dt>Repetidas</dt>
+            <dd>{{ post.repeated_cards|length }}</dd>
+          </div>
+          <div>
+            <dt>Faltantes</dt>
+            <dd>{{ post.missing_cards|length }}</dd>
+          </div>
+        </dl>
+        <a href="{{ url_for('post_detail', post_id=post.id) }}">Ver matches</a>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <section class="empty-state">
+    <h2>No hay posts todavía</h2>
+    <p>Crea el primero registrando qué cartas tiene la persona y cuántas repetidas puede intercambiar.</p>
+    <a class="button" href="{{ url_for('new_post') }}">Crear post</a>
+  </section>
+{% endif %}
+{% endblock %}

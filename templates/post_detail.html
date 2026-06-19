@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+  <div>
+    <p class="eyebrow">Post</p>
+    <h1>{{ post.person_name }}</h1>
+    <p class="muted">{{ post.created_at }}</p>
+  </div>
+  <a class="button" href="{{ url_for('new_post') }}">Crear otro post</a>
+</section>
+
+<section class="summary-grid">
+  <article>
+    <h2>Repetidas</h2>
+    <p class="metric">{{ post.repeated_cards|length }}</p>
+  </article>
+  <article>
+    <h2>Faltantes</h2>
+    <p class="metric">{{ post.missing_cards|length }}</p>
+  </article>
+</section>
+
+<section class="detail-grid">
+  <article>
+    <h2>Cartas repetidas</h2>
+    {% if post.repeated_cards %}
+      <ul class="card-list">
+        {% for card in post.repeated_cards %}
+          <li><strong>{{ card.code }}</strong> {{ card.name }} <span>{{ card.team }} · x{{ card.quantity }}</span></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No registró cartas repetidas.</p>
+    {% endif %}
+  </article>
+
+  <article>
+    <h2>Cartas faltantes</h2>
+    {% if post.missing_cards %}
+      <ul class="card-list">
+        {% for card in post.missing_cards[:80] %}
+          <li><strong>{{ card.code }}</strong> {{ card.name }} <span>{{ card.team }}</span></li>
+        {% endfor %}
+      </ul>
+      {% if post.missing_cards|length > 80 %}
+        <p class="muted">Mostrando 80 de {{ post.missing_cards|length }} faltantes.</p>
+      {% endif %}
+    {% else %}
+      <p class="muted">Tiene todas las cartas registradas.</p>
+    {% endif %}
+  </article>
+</section>
+
+<section class="matches">
+  <h2>Matches recomendados</h2>
+  {% if matches %}
+    {% for match in matches %}
+      <article class="match-card">
+        <div>
+          <h3>{{ match.post.person_name }}</h3>
+          <p>{{ match.score }} repetidas útiles</p>
+        </div>
+        <ul class="chip-list">
+          {% for card in match.useful_cards[:12] %}
+            <li>{{ card.code }} x{{ card.quantity }}</li>
+          {% endfor %}
+        </ul>
+      </article>
+    {% endfor %}
+  {% else %}
+    <p class="muted">Aún no hay otros posts con repetidas útiles para esta persona.</p>
+  {% endif %}
+</section>
+{% endblock %}

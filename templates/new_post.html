@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header compact">
+  <div>
+    <p class="eyebrow">Nuevo post</p>
+    <h1>Registrar cartas</h1>
+  </div>
+</section>
+
+<form class="post-form" method="post">
+  <section class="person-panel">
+    <label for="person_name">Nombre de la persona</label>
+    <input id="person_name" name="person_name" type="text" placeholder="Ej. María, Andrés, Sofía" required>
+  </section>
+
+  <section class="tools-panel" aria-label="Herramientas para buscar cartas">
+    <label for="card_search">Buscar carta</label>
+    <input id="card_search" type="search" placeholder="Filtrar por código, nombre o selección">
+  </section>
+
+  <section class="catalog-table" aria-label="Catálogo de cartas">
+    <div class="table-head">
+      <span>Carta</span>
+      <span>La tiene</span>
+      <span>Repetidas</span>
+    </div>
+
+    {% for card in catalog %}
+      <div class="card-row" data-search="{{ (card.code ~ ' ' ~ card.name ~ ' ' ~ card.team)|lower }}">
+        <div class="card-info">
+          <strong>{{ card.code }}</strong>
+          <span>{{ card.name }}</span>
+          <small>{{ card.team }}</small>
+        </div>
+        <label class="check-cell">
+          <input type="checkbox" name="owned_codes" value="{{ card.code }}">
+        </label>
+        <input class="quantity-input" type="number" name="duplicate_quantity_{{ card.code }}" min="0" value="0" inputmode="numeric">
+      </div>
+    {% endfor %}
+  </section>
+
+  <div class="sticky-actions">
+    <a class="secondary-button" href="{{ url_for('index') }}">Cancelar</a>
+    <button class="button" type="submit">Guardar post</button>
+  </div>
+</form>
+
+<script>
+  const searchInput = document.querySelector("#card_search");
+  const rows = document.querySelectorAll(".card-row");
+
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    rows.forEach((row) => {
+      row.hidden = query && !row.dataset.search.includes(query);
+    });
+  });
+</script>
+{% endblock %}
